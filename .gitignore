@@ -4,6 +4,7 @@
 [Bb]uild/
 [Bb]uilds/
 /Assets/AssetStoreTools*
+/LD41/Assets/Editor
 
 # Visual Studio 2015 cache directory
 /.vs/

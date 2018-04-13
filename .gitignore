@@ -6,6 +6,8 @@
 /Assets/AssetStoreTools*
 /LD41/Assets/Editor
 /LD41/Assets/Editor.meta
+/LD41/Assets/VacuumShaders
+/LD41/Assets/VacuumShaders.meta
 
 # Visual Studio 2015 cache directory
 /.vs/

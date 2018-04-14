@@ -4,8 +4,8 @@
 [Bb]uild/
 [Bb]uilds/
 /Assets/AssetStoreTools*
-/LD41/Assets/Editor
-/LD41/Assets/Editor.meta
+/LD41/Assets/Lib
+/LD41/Assets/Lib.meta
 /LD41/Assets/VacuumShaders
 /LD41/Assets/VacuumShaders.meta
 

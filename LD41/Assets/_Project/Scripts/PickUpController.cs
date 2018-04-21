@@ -8,6 +8,8 @@ public class PickUpController : MonoBehaviour {
 	private GameObject _handSpot;
 	[SerializeField]
 	private GameObject _interactableObjects;
+	[SerializeField]
+	private SeedSpotManager _seedSpotManager;
 	private bool _handSpotFree = true;
 	private GameObject _pickedItem;
 
@@ -36,6 +38,7 @@ public class PickUpController : MonoBehaviour {
 			{
 				lastGameObjectInList.GetComponent<Collider>().enabled = false;
 				PickUpItem(lastGameObjectInList);
+
 			}
 		} else if (_collidedGameobjectEnter.GetComponent<SeedSpot>() != null) 
 		{
@@ -45,6 +48,7 @@ public class PickUpController : MonoBehaviour {
 				_handSpotFree = true;
 				if(_pickedItem.GetComponent<PickUpItem>().GetPickUpItemType() == PickUpItemType.Seed);
 				seedSpot.PlantPlantSeed(_pickedItem);
+				_seedSpotManager.AddSeedSpotsToActiveSeedSpotsList(seedSpot);
 			}
 		}
 	}
@@ -74,7 +78,7 @@ public class PickUpController : MonoBehaviour {
 			g.transform.parent = _handSpot.transform;
 			g.transform.position = _handSpot.transform.position;
 			_pickedItem = g;
-		}	
+		}
 	}
 
 	private void DropCurrentItem(GameObject g)

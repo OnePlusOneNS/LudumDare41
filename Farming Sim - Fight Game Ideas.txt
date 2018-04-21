@@ -1,0 +1,15 @@
+Genres
+    Farming Sim + Fight Game (Wave Shooter)
+
+Gameplay
+    Plant seeds
+    Harvest flowers/crops
+    Protect the field
+    Plants grow upon finishing a wave
+    Crops are sold
+    Cash -> Score
+
+Style
+    First Person
+    Unturned like graphics
+

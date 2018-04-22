@@ -166,12 +166,12 @@ InputManager:
     axis: 0
     joyNum: 0
   - serializedVersion: 3
-    m_Name: RripMoveLeft
+    m_Name: Drop
     descriptiveName: 
     descriptiveNegativeName: 
-    negativeButton: left
+    negativeButton: g
     positiveButton: 
-    altNegativeButton: a
+    altNegativeButton: x
     altPositiveButton: 
     gravity: 3
     dead: 0.001

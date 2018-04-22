@@ -7,4 +7,5 @@ public enum PickUpItemType
 	Weapon = 1,
 	Seed = 2,
 	PowerUp = 3,
+	Tool = 4,
 }

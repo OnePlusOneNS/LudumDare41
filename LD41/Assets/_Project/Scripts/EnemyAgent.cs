@@ -11,24 +11,38 @@ public class EnemyAgent : MonoBehaviour {
 	[SerializeField]
 	private SeedSpotManager _seedSpotManager;
 	[SerializeField]
-	private float _attackDelay = 4;
+	private int _attackDelay = 4;
+	[SerializeField]
+	private int _attackDamage;
 	private Animator _animator;
 	private NavMeshAgent _agent;
 	private UnityAction DeathAction;
 
 	private void Start() 
 	{
+		_animator = GetComponent<Animator>();
 		_seedSpotManager = GameObject.FindGameObjectWithTag("SeedSpotManager").GetComponent<SeedSpotManager>();
 		_agent = GetComponent<NavMeshAgent>();
 		_agent.SetDestination(_seedSpotManager.GetClosestActiveSeedSpot(transform.position));
+		_animator.SetTrigger("walk");
 		StartCoroutine(TargetReachedRoutine());
+	}
+
+	public int GetAttackDamage() 
+	{
+		return _attackDamage;
+	}
+
+	public int GetAttackDelay() 
+	{
+		return _attackDelay;
 	}
 
 	private void Update() 
 	{
 		if(_health <= 0) 
 		{
-
+			
 			Destroy(this.gameObject);
 		}
 	}
@@ -55,7 +69,7 @@ public class EnemyAgent : MonoBehaviour {
 
 		} else 
 		{
-			if(c.GetComponentInParent<PickUpItem>().GetPickUpItemType() == PickUpItemType.Weapon) 
+			if(c.GetComponentInParent<PickUpItem>().GetPickUpItemType() == PickUpItemType.Weapon || c.GetComponentInParent<PickUpItem>().GetPickUpItemType() == PickUpItemType.Tool) 
 			{
 				Debug.Log("Weapon Hit");
 				DecreaseHealth(c.GetComponentInParent<PickUpItem>().GetDamageAmount());

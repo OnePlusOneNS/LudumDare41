@@ -34,6 +34,14 @@ public class PickUpController : MonoBehaviour {
 
 	private void Update() 
 	{
+		if(Input.GetButton("Drop")) 
+		{
+			if(!_handSpotFree) 
+			{
+				DropCurrentItem(_pickedItem);
+			}
+		}
+
 		if(Input.GetButton("Pickup") && !_pickUpLock) 
 		{
 			_pickUpLock = true;
@@ -55,8 +63,9 @@ public class PickUpController : MonoBehaviour {
 			if (Physics.Raycast(ray, out hit, 3, _seedSpotLayer)) 
 			{
 				SeedSpot seedSpot = hit.collider.gameObject.GetComponent<SeedSpot>();
-				if(_pickedItem.GetComponent<PickUpItem>().GetPickUpItemType() == PickUpItemType.Seed && seedSpot.GetSpotFree())
+				if(_pickedItem.GetComponent<PickUpItem>().GetPickUpItemType() == PickUpItemType.Seed && seedSpot.GetSpotFree() && !_pickedItem.GetComponent<Plant>().GetBeenPlaced())
 				{
+					_pickedItem.GetComponent<Plant>().SetBeenPlaced(true);
 					seedSpot.PlantPlantSeed(_pickedItem);	
 					_seedSpotManager.AddSeedSpotsToActiveSeedSpotsList(seedSpot);
 					_handSpotFree = true;
@@ -77,22 +86,47 @@ public class PickUpController : MonoBehaviour {
 	{
 		if(_handSpotFree) 
 		{
+			if(g.GetComponent<Plant>() != null) 
+			{
+				if(g.GetComponent<Plant>().GetBeenPlaced()) {
+					return;
+				} else 
+				{
+					_handSpotFree = false;
+					g.transform.parent = _handSpot.transform;
+					g.transform.position = _handSpot.transform.position;
+					g.transform.rotation = _handSpot.transform.rotation;
+					_pickedItem = g;
+					if(g.GetComponent<PickUpItem>().GetPickUpItemType() == PickUpItemType.Tool)
+					{
+						_playerFightController.RecievedWeapon(g);
+					}
+				}
+			} else 
+			{
+				_handSpotFree = false;
+				g.transform.parent = _handSpot.transform;
+				g.transform.position = _handSpot.transform.position;
+				g.transform.rotation = _handSpot.transform.rotation;
+				_pickedItem = g;
+				if(g.GetComponent<PickUpItem>().GetPickUpItemType() == PickUpItemType.Weapon || g.GetComponent<PickUpItem>().GetPickUpItemType() == PickUpItemType.Tool)
+				{
+					_playerFightController.RecievedWeapon(g);
+				}
+			}
+		} else 
+		{
+			DropCurrentItem(_pickedItem);
 			_handSpotFree = false;
 			g.transform.parent = _handSpot.transform;
 			g.transform.position = _handSpot.transform.position;
 			g.transform.rotation = _handSpot.transform.rotation;
 			_pickedItem = g;
-			if(_pickedItem.GetComponent<PickUpItem>().GetPickUpItemType() == PickUpItemType.Weapon) 
-			{
-				_playerFightController.RecievedWeapon(_pickedItem);
-			}
-		} else 
-		{
-			DropCurrentItem(_pickedItem);
-			g.transform.parent = _handSpot.transform;
-			g.transform.position = _handSpot.transform.position;
-			g.transform.rotation = _handSpot.transform.rotation	;
-			_pickedItem = g;
+
+			if(g.GetComponent<PickUpItem>().GetPickUpItemType() == PickUpItemType.Tool)
+				{
+					_playerFightController.RecievedWeapon(g);
+				}
 		}
 	}
 
@@ -100,5 +134,6 @@ public class PickUpController : MonoBehaviour {
 	{
 		g.transform.parent = _interactableObjects.transform;
 		g.GetComponent<Collider>().enabled = true;
+		_handSpotFree = true;
 	}
 }

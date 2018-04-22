@@ -21,16 +21,8 @@ public class SeedSpotManager : MonoBehaviour {
 
 	public void WaterPlants() 
 	{
-		StartCoroutine(WaterPlantsRoutine());
-	}
-
-	private IEnumerator WaterPlantsRoutine() 
-	{
 		_waterStream.SetActive(true);
-		yield return new WaitForSeconds(8f);
-		_waterStream.SetActive(false);
 	}
-
 	public void RemoveSeedSpotsFromActiveSeedSpotList(SeedSpot deactivatedSeedSpot) 
 	{
 		_nonActiveSeedSpots.Add(deactivatedSeedSpot.gameObject);
@@ -38,11 +30,16 @@ public class SeedSpotManager : MonoBehaviour {
 		_activeSeedSpots.Remove(deactivatedSeedSpot.gameObject);
 	}
 
+	public void StopWater() 
+	{
+		_waterStream.SetActive(false);
+	}
+
 	public void PlantsGrow() 
 	{
-		for(int i = 0; i<_activeSeedSpots.Count-1; i++) 
+		for(int i = 0; i<_activeSeedSpots.Count; i++) 
 		{
-			_activeSeedSpots[i].GetComponent<Plant>().Grow();
+			_activeSeedSpots[i].GetComponentInChildren<Plant>().Grow();
 		}
 	}
 

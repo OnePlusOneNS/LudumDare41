@@ -20,14 +20,29 @@ public class WaveManager : MonoBehaviour {
 	private float _waveCheckDelay;
 	[SerializeField]
 	private SeedSpotManager _seedSpotManager;
+	[SerializeField]
+	private GameObject _enemyParent;
 
 
+	private int _enemyCounter;
 	private int _waveCounter;
 	private bool _waveInProgress = false;
 
 	private void Start() 
 	{
 		_waveCounter = 0;
+	}
+
+	void Update()	
+	{
+		if(_waveInProgress) 
+		{
+			if(_enemyParent.transform.childCount == 0) 
+			{
+				_spawnedEnemyList.Clear();
+				FinishWave();
+			}
+		}
 	}
 
 	public void LaunchWave() 
@@ -57,8 +72,10 @@ public class WaveManager : MonoBehaviour {
 
 	private void FinishWave() 
 	{
+		Debug.Log("FÜHRE FINISH AUS");
 		_seedSpotManager.PlantsGrow();
-		
+		_seedSpotManager.StopWater();
+		_waveInProgress = false;
 	}
 
 	private Vector3 RandomSpawner() 
@@ -68,42 +85,19 @@ public class WaveManager : MonoBehaviour {
 
 	private void SpawnEnemy() 
 	{
-		_spawnedEnemyList.Add(Instantiate(_enemy, RandomSpawner(), Quaternion.identity));
+		Instantiate(_enemy, RandomSpawner(), Quaternion.identity).gameObject.transform.parent = _enemyParent.transform;
 	}
 
 	private IEnumerator SpawnWaveRoutine(float delay) 
 	{
-		int enemyCount = _enemyStartCount;
+		int enemyCount = _enemyStartCount + _waveCounter;
+		enemyCount--;
+		SpawnEnemy();
 		while(enemyCount > 0) 
 		{
-			enemyCount--;
-			SpawnEnemy();
 			yield return new WaitForSeconds(delay);
+			SpawnEnemy();
+			enemyCount--;
 		}
-	StartCoroutine(WaveInProgressRoutine());
-	}
-
-	private IEnumerator WaveInProgressRoutine() 
-	{
-		short remainingEnemies = (short)_spawnedEnemyList.Count;
-		while(_spawnedEnemyList.Count != 0) 
-		{
-			yield return new WaitForSeconds(_waveCheckDelay);
-			short counter = 0;
-			for(int i = 0; i<=_spawnedEnemyList.Count-1;i++) 
-			{
-				if(_spawnedEnemyList[i] == null) 
-				{
-					counter++;
-					if(counter == _spawnedEnemyList.Count) 
-					{
-						_spawnedEnemyList.Clear();
-						FinishWave();
-						yield return null;
-					}
-				}
-			}
-		}  
-			yield return null;
 	}
 }

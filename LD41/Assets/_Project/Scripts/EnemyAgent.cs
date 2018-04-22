@@ -11,7 +11,7 @@ public class EnemyAgent : MonoBehaviour {
 	[SerializeField]
 	private SeedSpotManager _seedSpotManager;
 	[SerializeField]
-	private int _attackDelay = 4;
+	private float _attackDelay = 4f;
 	[SerializeField]
 	private int _attackDamage;
 	private Animator _animator;
@@ -25,17 +25,16 @@ public class EnemyAgent : MonoBehaviour {
 		_agent = GetComponent<NavMeshAgent>();
 		_agent.SetDestination(_seedSpotManager.GetClosestActiveSeedSpot(transform.position));
 		_animator.SetTrigger("walk");
-		StartCoroutine(TargetReachedRoutine());
+	}
+
+	private void FixedUpdate() 
+	{
+		_agent.SetDestination(_seedSpotManager.GetClosestActiveSeedSpot(transform.position));
 	}
 
 	public int GetAttackDamage() 
 	{
 		return _attackDamage;
-	}
-
-	public int GetAttackDelay() 
-	{
-		return _attackDelay;
 	}
 
 	private void Update() 
@@ -45,16 +44,6 @@ public class EnemyAgent : MonoBehaviour {
 			
 			Destroy(this.gameObject);
 		}
-	}
-
-	private IEnumerator TargetReachedRoutine() 
-	{
-		while(_agent.remainingDistance > 2) 
-		{
-			yield return null;
-		}
-		_animator.SetTrigger("idle");
-		StartCoroutine(EnemyAttackRoutine());
 	}
 
 	private void UpdateDestination(Vector3 newTargetPosition) 
@@ -67,13 +56,18 @@ public class EnemyAgent : MonoBehaviour {
 		if(c.tag == "Player") 
 		{
 
-		} else 
+		} 
+		if(c.GetComponentInParent<PickUpItem>() != null) 
 		{
 			if(c.GetComponentInParent<PickUpItem>().GetPickUpItemType() == PickUpItemType.Weapon || c.GetComponentInParent<PickUpItem>().GetPickUpItemType() == PickUpItemType.Tool) 
 			{
 				Debug.Log("Weapon Hit");
 				DecreaseHealth(c.GetComponentInParent<PickUpItem>().GetDamageAmount());
-			}
+			}  
+		}
+		if(c.GetComponent<SeedSpot>() != null) 
+		{
+			StartCoroutine(EnemyAttackRoutine(c.GetComponent<SeedSpot>()));
 		}	
 	}
 
@@ -82,12 +76,25 @@ public class EnemyAgent : MonoBehaviour {
 		_health -= hitGotten;
 	}
 
-	private IEnumerator EnemyAttackRoutine() 
+	private IEnumerator EnemyAttackRoutine(SeedSpot g) 
 	{
-		//_currentWeapon.GetComponentInChildren<Collider>().enabled = true;
-		_animator.SetTrigger("attack");
-		yield return new WaitForSeconds(_animator.GetCurrentAnimatorStateInfo(0).length);
-		//_currentWeapon.GetComponentInChildren<Collider>().enabled = false;
-		yield return new WaitForSeconds(_attackDelay);
+		while(g.gameObject.GetComponentInChildren<Plant>() != null) 
+		{
+			yield return new WaitForSeconds(_attackDelay);
+			_animator.SetTrigger("attack");
+			if(g.gameObject.GetComponentInChildren<Plant>() != null) 
+			{
+				g.gameObject.GetComponentInChildren<Plant>().DecreaseHealth(_attackDamage);
+				
+			} else 
+			{
+				yield return null;
+			}
+			_animator.SetTrigger("idle");
+			if(!(g.gameObject.GetComponentInChildren<Plant>() != null)) 
+			{
+				yield return null;
+			}
+		}
 	}
 }

@@ -22,7 +22,7 @@ GameObject:
   - component: {fileID: 33548048851719810}
   - component: {fileID: 23278478215475212}
   - component: {fileID: 114805560169859436}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: PlantStage3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -43,7 +43,7 @@ GameObject:
   - component: {fileID: 114066670132433580}
   - component: {fileID: 114570909848057572}
   - component: {fileID: 136071032615259766}
-  m_Layer: 9
+  m_Layer: 12
   m_Name: Plant
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -61,7 +61,7 @@ GameObject:
   - component: {fileID: 33646090430639528}
   - component: {fileID: 23447609318059430}
   - component: {fileID: 114163221667331296}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: PlantSeeds
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -79,7 +79,7 @@ GameObject:
   - component: {fileID: 33533817196313536}
   - component: {fileID: 23447093415974302}
   - component: {fileID: 114449342011660596}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: PlantStage2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -97,7 +97,7 @@ GameObject:
   - component: {fileID: 33653002963696784}
   - component: {fileID: 23386648226837516}
   - component: {fileID: 114639776203731858}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: PlantStage4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -115,7 +115,7 @@ GameObject:
   - component: {fileID: 33406965933829892}
   - component: {fileID: 23649976412525484}
   - component: {fileID: 114824198146047170}
-  m_Layer: 0
+  m_Layer: 12
   m_Name: PlantStage1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -128,9 +128,9 @@ Transform:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1163988606339346}
-  m_LocalRotation: {x: 0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -6.608617, y: 0.8223108, z: -2.892}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalRotation: {x: -0, y: 0.8536078, z: -0, w: 0.5209163}
+  m_LocalPosition: {x: -7.504, y: 0.697, z: -2.59}
+  m_LocalScale: {x: 1.0000002, y: 1, z: 1.0000002}
   m_Children:
   - {fileID: 4404143258158506}
   - {fileID: 4263997765093496}
@@ -139,7 +139,7 @@ Transform:
   - {fileID: 4078117449264746}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 117.213005, z: 0}
 --- !u!4 &4078117449264746
 Transform:
   m_ObjectHideFlags: 1
@@ -523,7 +523,7 @@ MonoBehaviour:
   - {fileID: 114449342011660596}
   - {fileID: 114805560169859436}
   - {fileID: 114639776203731858}
-  _health: 0
+  _plant: {fileID: 1163988606339346}
 --- !u!114 &114639776203731858
 MonoBehaviour:
   m_ObjectHideFlags: 1

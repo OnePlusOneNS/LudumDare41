@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.SceneManagement;
 
 public class WaveManager : MonoBehaviour {
 
@@ -41,6 +42,9 @@ public class WaveManager : MonoBehaviour {
 			{
 				_spawnedEnemyList.Clear();
 				FinishWave();
+			} else if(_seedSpotManager.GetActiveSeedSpotsCount() <= 0) 
+			{
+				Time.timeScale = 0;
 			}
 		}
 	}
@@ -71,8 +75,7 @@ public class WaveManager : MonoBehaviour {
 	}
 
 	private void FinishWave() 
-	{
-		Debug.Log("FÜHRE FINISH AUS");
+	{	
 		_seedSpotManager.PlantsGrow();
 		_seedSpotManager.StopWater();
 		_waveInProgress = false;

@@ -7,10 +7,15 @@ public class Plant : MonoBehaviour {
 	[SerializeField]
 	private List<PlantStage> _plantStagesList = new List<PlantStage>();
 
-	private short _health;
+	private SeedSpotManager _seedSpotManager;
+	private int _health;
 	private bool _beenPlaced;
 	private bool _attackInProgress = false;
 	private int _currentPlantStage;
+	private bool _isAboutToDie = false;
+	
+	[SerializeField]
+	private GameObject _plant;
 
 	public bool GetBeenPlaced() 
 	{
@@ -27,6 +32,7 @@ public class Plant : MonoBehaviour {
 		_currentPlantStage = 0;
 		_beenPlaced = false;
 		_health = 15;
+		_seedSpotManager = GameObject.FindGameObjectWithTag("SeedSpotManager").GetComponent<SeedSpotManager>();
 	}
 	[ContextMenu("Grow")]
 	public void Grow() 
@@ -38,17 +44,20 @@ public class Plant : MonoBehaviour {
 		} else 
 		{
 			_plantStagesList[_currentPlantStage].gameObject.SetActive(true);
-		}
-		
+		}	
 	}
 
 	private void Cease() 
 	{
 		_plantStagesList[_currentPlantStage].gameObject.SetActive(false);
-		_currentPlantStage--;
 		if(_currentPlantStage <= 0) {
-			Destroy(this.gameObject);
+			GetComponent<MeshRenderer>().enabled = false;
+			_seedSpotManager.RemoveSeedSpotsFromActiveSeedSpotList(GetComponentInParent<SeedSpot>());
+			StartCoroutine(DieRoutine());
 		} else {
+			_currentPlantStage--;
+			_isAboutToDie = false;
+			_health = 15;
 			_plantStagesList[_currentPlantStage].gameObject.SetActive(true);
 		}
 	}
@@ -58,10 +67,6 @@ public class Plant : MonoBehaviour {
 		if(c.tag == "Player") 
 		{
 		
-		} else if(c.GetComponentInParent<PickUpItem>()!= null)
-		{	
-			if(c.GetComponentInParent<PickUpItem>().GetPickUpItemType() == PickUpItemType.Tool && _currentPlantStage == _plantStagesList.Count)
-				Harvest();
 		} else if(c.GetComponent<EnemyAgent>() != null) 
 		{
 			_attackInProgress = true;
@@ -69,35 +74,32 @@ public class Plant : MonoBehaviour {
 		} 
 	}	
 
-
-	private void OnTriggerExit(Collider c) 
+	public bool IsAboutToDie() 
 	{
-		if(c.GetComponent<EnemyAgent>() != null) 
-			{
-				_attackInProgress = false;
-			}
+		return _isAboutToDie;
 	}
 
-	private void DecreaseHealth(int damage) 
+	private IEnumerator DieRoutine() 
 	{
-		_health -= (short)damage;
+		yield return new WaitForSeconds(5f);
+		Destroy(this.gameObject);
+	}
+
+	public void DecreaseHealth(int damage) 
+	{
+		if(_health <= 0) 
+		{
+			_isAboutToDie = true;
+			Cease();
+		} else 
+		{
+			_health = _health - damage;
+		}
 	}
 
 	private IEnumerator GetDamagedRoutine(EnemyAgent enemyAgentAttacker) 
 	{
-		if(_attackInProgress) 
-		{
-			while(_health > 0) 
-			{
-					yield return new WaitForSeconds(enemyAgentAttacker.GetAttackDelay());
-					DecreaseHealth(enemyAgentAttacker.GetAttackDamage());
-					yield return null;
-			}
-			if(_health <= 0) 
-			{
-				Cease();
-			}
-		}
+			
 		yield return null;		
 	}
 
@@ -105,9 +107,10 @@ public class Plant : MonoBehaviour {
 	{
 	}
 
-	private void Harvest() 
+	public void Harvest() 
 	{
-		Instantiate(this.gameObject).GetComponent<Plant>();
+		Instantiate(_plant , new Vector3(0,0,0) , Quaternion.identity);
+		_seedSpotManager.RemoveSeedSpotsFromActiveSeedSpotList(gameObject.GetComponentInParent<SeedSpot>());
 		Destroy(this.gameObject);
 	}
 }

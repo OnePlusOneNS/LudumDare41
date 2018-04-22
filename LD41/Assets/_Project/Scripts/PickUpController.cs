@@ -19,7 +19,7 @@ public class PickUpController : MonoBehaviour {
 	private bool _pickUpLock = false, _useLock = false;
 	private GameObject _pickedItem;
 
-	private int _pickUpLayer, _seedSpotLayer, _interactableButtonLayer;
+	private int _pickUpLayer, _seedSpotLayer, _interactableButtonLayer, _plantLayer;
 
 	private List<GameObject> _collidedGameobjectsList = new List<GameObject>();
 	private GameObject _collidedGameobjectEnter;
@@ -30,6 +30,7 @@ public class PickUpController : MonoBehaviour {
 		_pickUpLayer = LayerMask.GetMask("Pickup");
 		_seedSpotLayer = LayerMask.GetMask("SeedSpot");
 		_interactableButtonLayer = LayerMask.GetMask("InteractableButtonLayer");
+		_plantLayer = LayerMask.GetMask("PlantLayer");
 	}
 
 	private void Update() 
@@ -52,7 +53,13 @@ public class PickUpController : MonoBehaviour {
 				GameObject hitGameObject = hit.collider.gameObject;
 				hitGameObject.GetComponent<Collider>().enabled = false;
 				PickUpItem(hitGameObject);
+			} else if (Physics.Raycast(ray, out hit, 2, _plantLayer)) 
+			{
+				GameObject hitGameObject = hit.collider.gameObject;
+				hitGameObject.GetComponent<Collider>().enabled = false;
+				PickUpItem(hitGameObject);
 			}
+				
 		_pickUpLock = false;
 		}
 		if(Input.GetButton("Use") && !_useLock)
@@ -97,10 +104,6 @@ public class PickUpController : MonoBehaviour {
 					g.transform.position = _handSpot.transform.position;
 					g.transform.rotation = _handSpot.transform.rotation;
 					_pickedItem = g;
-					if(g.GetComponent<PickUpItem>().GetPickUpItemType() == PickUpItemType.Tool)
-					{
-						_playerFightController.RecievedWeapon(g);
-					}
 				}
 			} else 
 			{
@@ -116,18 +119,32 @@ public class PickUpController : MonoBehaviour {
 			}
 		} else 
 		{
-			DropCurrentItem(_pickedItem);
-			_handSpotFree = false;
-			g.transform.parent = _handSpot.transform;
-			g.transform.position = _handSpot.transform.position;
-			g.transform.rotation = _handSpot.transform.rotation;
-			_pickedItem = g;
-
-			if(g.GetComponent<PickUpItem>().GetPickUpItemType() == PickUpItemType.Tool)
+			if(g.GetComponent<Plant>() != null) 
+			{
+				if(g.GetComponent<Plant>().GetBeenPlaced()) {
+					return;
+				} else 
 				{
-					_playerFightController.RecievedWeapon(g);
+					DropCurrentItem(_pickedItem);
+					_handSpotFree = false;
+					g.transform.parent = _handSpot.transform;
+					g.transform.position = _handSpot.transform.position;
+					g.transform.rotation = _handSpot.transform.rotation;
+					_pickedItem = g;
 				}
-		}
+			}
+				DropCurrentItem(_pickedItem);
+				_handSpotFree = false;
+				g.transform.parent = _handSpot.transform;
+				g.transform.position = _handSpot.transform.position;
+				g.transform.rotation = _handSpot.transform.rotation;
+				_pickedItem = g;
+
+				if(g.GetComponent<PickUpItem>().GetPickUpItemType() == PickUpItemType.Weapon || g.GetComponent<PickUpItem>().GetPickUpItemType() == PickUpItemType.Tool)
+					{
+						_playerFightController.RecievedWeapon(g);
+					}
+			}
 	}
 
 	private void DropCurrentItem(GameObject g)

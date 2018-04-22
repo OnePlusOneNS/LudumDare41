@@ -14,9 +14,17 @@ public class SeedSpotManager : MonoBehaviour {
 
 	public void AddSeedSpotsToActiveSeedSpotsList(SeedSpot activatedSeedSpot) 
 	{
-		_activeSeedSpots.Add(activatedSeedSpot.gameObject);
-		activatedSeedSpot.GetComponentInChildren<ParticleSystem>().Stop();
-		_nonActiveSeedSpots.Remove(activatedSeedSpot.gameObject);
+		if(!(_activeSeedSpots.Contains(activatedSeedSpot.gameObject))) 
+		{
+			_activeSeedSpots.Add(activatedSeedSpot.gameObject);
+			activatedSeedSpot.GetComponentInChildren<ParticleSystem>().Stop();
+			_nonActiveSeedSpots.Remove(activatedSeedSpot.gameObject);
+		}
+	}
+
+	public int GetActiveSeedSpotsCount() 
+	{
+		return _activeSeedSpots.Count;
 	}
 
 	public void WaterPlants() 
@@ -25,9 +33,12 @@ public class SeedSpotManager : MonoBehaviour {
 	}
 	public void RemoveSeedSpotsFromActiveSeedSpotList(SeedSpot deactivatedSeedSpot) 
 	{
-		_nonActiveSeedSpots.Add(deactivatedSeedSpot.gameObject);
-		deactivatedSeedSpot.GetComponentInChildren<ParticleSystem>().Play();
-		_activeSeedSpots.Remove(deactivatedSeedSpot.gameObject);
+		if(!(_nonActiveSeedSpots.Contains(deactivatedSeedSpot.gameObject))) 
+		{
+			_nonActiveSeedSpots.Add(deactivatedSeedSpot.gameObject);
+			deactivatedSeedSpot.GetComponentInChildren<ParticleSystem>().Play();
+			_activeSeedSpots.Remove(deactivatedSeedSpot.gameObject);
+		}
 	}
 
 	public void StopWater() 

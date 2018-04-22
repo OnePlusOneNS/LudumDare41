@@ -8,28 +8,33 @@ public class PickUpItem : MonoBehaviour {
 	[SerializeField]
 	private string _name;
 	[SerializeField]
-	private float _damage, _attackDelay;
+	private short _damageAmount, _attackDelay;
 	[SerializeField]
 	private PickUpItemType _type;
-	private bool _PickedUp = false;
+	private bool _pickedUp = false;
+
+	public short GetDamageAmount() 
+	{
+		return _damageAmount;
+	}
+
+	public short GetAttackDelay() 
+	{	
+		return _attackDelay;
+	}
 
 	public bool GetPickedUp() 
 	{
-		return _PickedUp;
+		return _pickedUp;
 	}
 
 	public void SetPickedUp(bool b) 
 	{
-		_PickedUp = b;
+		_pickedUp = b;
 	}
 
 	public PickUpItemType GetPickUpItemType() 
 	{
 		return _type;
-	}
-
-	public void GetInfo()
-	{
-		Debug.Log("Name " + _name + "Damage " + _damage + "Type " + _type);
 	}
 }

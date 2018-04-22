@@ -56,6 +56,10 @@ ModelImporter:
     400048: Cube
     400050: //RootNode
     2100000: No Name
+    2100002: Shell
+    2100004: Skin
+    2300000: //RootNode
+    3300000: //RootNode
     4300000: Cube
     9500000: //RootNode
     13700000: Cube

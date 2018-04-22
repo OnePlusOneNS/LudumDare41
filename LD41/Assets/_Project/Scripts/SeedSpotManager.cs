@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class SeedSpotManager : MonoBehaviour {
+	
+	[SerializeField]
+	private GameObject _waterStream;
 	[SerializeField]
 	private List<GameObject> _activeSeedSpots = new List<GameObject>();
 
@@ -12,13 +15,35 @@ public class SeedSpotManager : MonoBehaviour {
 	public void AddSeedSpotsToActiveSeedSpotsList(SeedSpot activatedSeedSpot) 
 	{
 		_activeSeedSpots.Add(activatedSeedSpot.gameObject);
+		activatedSeedSpot.GetComponentInChildren<ParticleSystem>().Stop();
 		_nonActiveSeedSpots.Remove(activatedSeedSpot.gameObject);
+	}
+
+	public void WaterPlants() 
+	{
+		StartCoroutine(WaterPlantsRoutine());
+	}
+
+	private IEnumerator WaterPlantsRoutine() 
+	{
+		_waterStream.SetActive(true);
+		yield return new WaitForSeconds(8f);
+		_waterStream.SetActive(false);
 	}
 
 	public void RemoveSeedSpotsFromActiveSeedSpotList(SeedSpot deactivatedSeedSpot) 
 	{
 		_nonActiveSeedSpots.Add(deactivatedSeedSpot.gameObject);
+		deactivatedSeedSpot.GetComponentInChildren<ParticleSystem>().Play();
 		_activeSeedSpots.Remove(deactivatedSeedSpot.gameObject);
+	}
+
+	public void PlantsGrow() 
+	{
+		for(int i = 0; i<_activeSeedSpots.Count-1; i++) 
+		{
+			_activeSeedSpots[i].GetComponent<Plant>().Grow();
+		}
 	}
 
 	public Vector3 GetClosestActiveSeedSpot(Vector3 agentPosition) 
@@ -35,5 +60,16 @@ public class SeedSpotManager : MonoBehaviour {
 			}
 		}
 		return destinationSeedSpot;
+	}
+
+	public bool SeedSpotsNotEmpty() 
+	{
+		if(_activeSeedSpots.Count != 0) 
+		{
+			return true;
+		} else 
+		{
+			return false;
+		}
 	}
 }

@@ -4,64 +4,73 @@ using UnityEngine;
 
 public class PickUpController : MonoBehaviour {
 
+
 	[SerializeField]
 	private GameObject _handSpot;
 	[SerializeField]
 	private GameObject _interactableObjects;
 	[SerializeField]
 	private SeedSpotManager _seedSpotManager;
+	[SerializeField]
+	private WaveManager _waveManager;
+	[SerializeField]
+	private PlayerFightController _playerFightController;
 	private bool _handSpotFree = true;
+	private bool _pickUpLock = false, _useLock = false;
 	private GameObject _pickedItem;
+
+	private int _pickUpLayer, _seedSpotLayer, _interactableButtonLayer;
 
 	private List<GameObject> _collidedGameobjectsList = new List<GameObject>();
 	private GameObject _collidedGameobjectEnter;
 	private GameObject _collidedGameobjectExit;
-	private void OnTriggerEnter(Collider c) 
+
+	private void Start() 
 	{
-		_collidedGameobjectEnter = c.gameObject;
-		if(_collidedGameobjectEnter.GetComponent<PickUpItem>() != null) 
-		{
-			Debug.Log("Gameobject -> " + _collidedGameobjectEnter);
-			//c.gameObject.GetComponent<PickUpItem>().GetInfo();
-			AddToColliderList(_collidedGameobjectEnter);
-		} else 
-		{
-		}
+		_pickUpLayer = LayerMask.GetMask("Pickup");
+		_seedSpotLayer = LayerMask.GetMask("SeedSpot");
+		_interactableButtonLayer = LayerMask.GetMask("InteractableButtonLayer");
 	}
 
-	private void OnTriggerStay(Collider c) 
+	private void Update() 
 	{
-		if(_collidedGameobjectEnter.GetComponent<PickUpItem>() != null) 
+		if(Input.GetButton("Pickup") && !_pickUpLock) 
 		{
-			GameObject lastGameObjectInList = _collidedGameobjectsList[_collidedGameobjectsList.Count-1];
-			if(Input.GetButton("Pickup") && !lastGameObjectInList.GetComponent<PickUpItem>().GetPickedUp())
+			_pickUpLock = true;
+			Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+			RaycastHit hit;
+			if(Physics.Raycast(ray, out hit, 2, _pickUpLayer)) 
 			{
-				lastGameObjectInList.GetComponent<Collider>().enabled = false;
-				PickUpItem(lastGameObjectInList);
-
+				GameObject hitGameObject = hit.collider.gameObject;
+				hitGameObject.GetComponent<Collider>().enabled = false;
+				PickUpItem(hitGameObject);
 			}
-		} else if (_collidedGameobjectEnter.GetComponent<SeedSpot>() != null) 
-		{
-			SeedSpot seedSpot = c.gameObject.GetComponent<SeedSpot>();
-			if(Input.GetButton("Use") && seedSpot.GetSpotFree())
-			{
-				_handSpotFree = true;
-				if(_pickedItem.GetComponent<PickUpItem>().GetPickUpItemType() == PickUpItemType.Seed);
-				seedSpot.PlantPlantSeed(_pickedItem);
-				_seedSpotManager.AddSeedSpotsToActiveSeedSpotsList(seedSpot);
-			}
+		_pickUpLock = false;
 		}
-	}
-
-	private void OnTriggerExit(Collider c) 
-	{
-		_collidedGameobjectExit = c.gameObject;
-		if(_collidedGameobjectExit.GetComponent<PickUpItem>() != null)
-			Debug.Log("Gameobject -> " + _collidedGameobjectExit); 
-			if(CheckItemInColliderList(_collidedGameobjectExit)) 
+		if(Input.GetButton("Use") && !_useLock)
+		{
+			_useLock = true;
+			Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+			RaycastHit hit;
+			if (Physics.Raycast(ray, out hit, 3, _seedSpotLayer)) 
 			{
-				RemoveFromColliderList(_collidedGameobjectExit);
+				SeedSpot seedSpot = hit.collider.gameObject.GetComponent<SeedSpot>();
+				if(_pickedItem.GetComponent<PickUpItem>().GetPickUpItemType() == PickUpItemType.Seed && seedSpot.GetSpotFree())
+				{
+					seedSpot.PlantPlantSeed(_pickedItem);	
+					_seedSpotManager.AddSeedSpotsToActiveSeedSpotsList(seedSpot);
+					_handSpotFree = true;
+				}
+			} else if (Physics.Raycast(ray, out hit, 3, _interactableButtonLayer)) 
+			{
+				if(_seedSpotManager.SeedSpotsNotEmpty()) 
+				{
+					_seedSpotManager.WaterPlants();
+					_waveManager.LaunchWave();
+				}
 			}
+			_useLock = false;
+		}		
 	}
 
 	private void PickUpItem(GameObject g) 
@@ -71,12 +80,18 @@ public class PickUpController : MonoBehaviour {
 			_handSpotFree = false;
 			g.transform.parent = _handSpot.transform;
 			g.transform.position = _handSpot.transform.position;
+			g.transform.rotation = _handSpot.transform.rotation;
 			_pickedItem = g;
+			if(_pickedItem.GetComponent<PickUpItem>().GetPickUpItemType() == PickUpItemType.Weapon) 
+			{
+				_playerFightController.RecievedWeapon(_pickedItem);
+			}
 		} else 
 		{
 			DropCurrentItem(_pickedItem);
 			g.transform.parent = _handSpot.transform;
 			g.transform.position = _handSpot.transform.position;
+			g.transform.rotation = _handSpot.transform.rotation	;
 			_pickedItem = g;
 		}
 	}
@@ -84,29 +99,6 @@ public class PickUpController : MonoBehaviour {
 	private void DropCurrentItem(GameObject g)
 	{
 		g.transform.parent = _interactableObjects.transform;
-
-	}
-
-	private void AddToColliderList(GameObject g) 
-	{
-		_collidedGameobjectsList.Add(g);
-		Debug.Log("Added " + g + "to the List");
-		Debug.Log("List now " + _collidedGameobjectsList.Count + "groß");
-	}
-
-	private void RemoveFromColliderList(GameObject g) 
-	{
-		_collidedGameobjectsList.Remove(g);
-		Debug.Log("Removed  " + g + "from the List");
-	}
-
-	private bool CheckItemInColliderList(GameObject g) 
-	{
-		if(_collidedGameobjectsList.Contains(g)) 
-		{
-			return true;
-		} else {
-			return false;
-		}
+		g.GetComponent<Collider>().enabled = true;
 	}
 }

@@ -12,6 +12,8 @@
 /LD41/Assets/SP_Textures
 /LD41/Assets/Gaia.meta
 /LD41/Assets/Gaia
+/LD41/Assets/ProCore
+/LD41/Assets/ProCore.meta
 
 # Visual Studio 2015 cache directory
 /.vs/
@@ -41,4 +43,3 @@ sysinfo.txt
 # Builds
 *.apk
 *.unitypackage
-LD41/Assets/ProCore/ProBuilderData/ProBuilderPreferences.asset.meta

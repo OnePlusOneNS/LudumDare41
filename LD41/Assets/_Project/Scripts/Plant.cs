@@ -17,6 +17,11 @@ public class Plant : MonoBehaviour {
 	[SerializeField]
 	private GameObject _plant;
 
+	public int GetCurrentStage() 
+	{
+		return _currentPlantStage;
+	}
+
 	public bool GetBeenPlaced() 
 	{
 		return _beenPlaced;

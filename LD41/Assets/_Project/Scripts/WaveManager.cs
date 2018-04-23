@@ -79,6 +79,7 @@ public class WaveManager : MonoBehaviour {
 		_seedSpotManager.PlantsGrow();
 		_seedSpotManager.StopWater();
 		_waveInProgress = false;
+		_seedSpotManager.CheckIfDone();
 	}
 
 	private Vector3 RandomSpawner() 

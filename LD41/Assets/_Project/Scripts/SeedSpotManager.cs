@@ -22,6 +22,28 @@ public class SeedSpotManager : MonoBehaviour {
 		}
 	}
 
+	public void CheckIfDone() 
+	{
+		int counter = 0;
+		if(_nonActiveSeedSpots.Count <= 0) 
+		{
+			for(int i = 0; i<_activeSeedSpots.Count; i++) 
+			{
+				if(_activeSeedSpots[i].GetComponentInChildren<Plant>().GetCurrentStage() == 4) 
+				{
+					counter++;
+				} else 
+				{
+					return;
+				}
+			}
+			if(counter == _activeSeedSpots.Count) 
+			{
+				Time.timeScale = 0;
+			}
+		}
+	}
+
 	public int GetActiveSeedSpotsCount() 
 	{
 		return _activeSeedSpots.Count;

@@ -21,10 +21,6 @@ public class PickUpController : MonoBehaviour {
 
 	private int _pickUpLayer, _seedSpotLayer, _interactableButtonLayer, _plantLayer;
 
-	private List<GameObject> _collidedGameobjectsList = new List<GameObject>();
-	private GameObject _collidedGameobjectEnter;
-	private GameObject _collidedGameobjectExit;
-
 	private void Start() 
 	{
 		_pickUpLayer = LayerMask.GetMask("Pickup");
@@ -46,7 +42,7 @@ public class PickUpController : MonoBehaviour {
 		if(Input.GetButton("Pickup") && !_pickUpLock) 
 		{
 			_pickUpLock = true;
-			Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+			Ray ray = Camera.main.ScreenPointToRay(new Vector3(Screen.width/2,Screen.height/2,0));
 			RaycastHit hit;
 			if(Physics.Raycast(ray, out hit, 2, _pickUpLayer)) 
 			{
@@ -65,7 +61,7 @@ public class PickUpController : MonoBehaviour {
 		if(Input.GetButton("Use") && !_useLock)
 		{
 			_useLock = true;
-			Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+			Ray ray = Camera.main.ScreenPointToRay(new Vector3(Screen.width/2,Screen.height/2,0));
 			RaycastHit hit;
 			if (Physics.Raycast(ray, out hit, 3, _seedSpotLayer)) 
 			{

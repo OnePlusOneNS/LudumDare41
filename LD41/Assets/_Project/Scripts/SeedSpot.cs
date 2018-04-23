@@ -21,6 +21,11 @@ public class SeedSpot : MonoBehaviour {
 		StartCoroutine(SeedToSeedSpotRoutine());
 	}
 
+	public void SetSpotFree() 
+	{
+		_spotFree = true;
+	}
+
 	private IEnumerator SeedToSeedSpotRoutine() 
 	{
 		float steps = 0f;

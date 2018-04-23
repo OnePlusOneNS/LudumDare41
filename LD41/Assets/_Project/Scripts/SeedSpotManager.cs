@@ -57,6 +57,7 @@ public class SeedSpotManager : MonoBehaviour {
 	{
 		if(!(_nonActiveSeedSpots.Contains(deactivatedSeedSpot.gameObject))) 
 		{
+			deactivatedSeedSpot.SetSpotFree();
 			_nonActiveSeedSpots.Add(deactivatedSeedSpot.gameObject);
 			deactivatedSeedSpot.GetComponentInChildren<ParticleSystem>().Play();
 			_activeSeedSpots.Remove(deactivatedSeedSpot.gameObject);

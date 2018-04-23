@@ -39,6 +39,7 @@ public class PlayerFightController : MonoBehaviour {
 			RaycastHit hit;
 			if (Physics.Raycast(ray, out hit, 2, _plantLayer)) 
 			{
+				_animator.SetTrigger("attack");
 				Plant plant = hit.collider.gameObject.GetComponent<Plant>();
 				plant.Harvest();
 			}

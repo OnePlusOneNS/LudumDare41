@@ -112,9 +112,13 @@ public class Plant : MonoBehaviour {
 	{
 	}
 
-	public void Harvest() 
+	public void Harvest()
 	{
-		Instantiate(_plant , new Vector3(0,0,0) , Quaternion.identity);
+		for(int i = 0; i<Random.Range(2,4); i++) 
+		{
+			GameObject g = Instantiate(_plant , new Vector3(0,0,i) , Quaternion.identity);
+			g.transform.localScale = new Vector3(1,1,1);
+		}
 		_seedSpotManager.RemoveSeedSpotsFromActiveSeedSpotList(gameObject.GetComponentInParent<SeedSpot>());
 		Destroy(this.gameObject);
 	}
